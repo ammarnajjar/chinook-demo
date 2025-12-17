@@ -1,0 +1,14 @@
+{
+  "name": "chinook-demo",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "includedScripts": [],
+  "sourceRoot": "src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+
+    "lint": {
+      "command": "eslint ./src ./package.json"
+    }
+  }
+}

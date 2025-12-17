@@ -1,0 +1,28 @@
+{
+  "name": "ui",
+  "root": "apps/ui",
+  "sourceRoot": "apps/ui/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          { "command": "cd apps/ui && npm run start" }
+        ],
+        "cwd": "./",
+        "parallel": false
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "commands": [
+          { "command": "cd apps/ui && npm run build" }
+        ],
+        "cwd": "./"
+      }
+    }
+  }
+}
