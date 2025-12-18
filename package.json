@@ -9,7 +9,7 @@
     "ui:start": "cd apps/ui && npm run start",
     "ui:build": "cd apps/ui && npm run build",
     "ui:preview": "cd apps/ui && npm run preview",
-    "start:dev": "concurrently -k -p name -n api,ui \"npm run start:api\" \"npm run ui:start\""
+    "start": "concurrently -k -p name -n api,ui \"npm run start:api\" \"npm run ui:start\""
   },
   "nx": {
     "includedScripts": []

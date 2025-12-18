@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Employee } from './employee.entity';
@@ -46,6 +46,25 @@ export class EmployeesService {
   }
 
   async remove(id: number): Promise<void> {
+    // Prevent deleting an employee who is referenced elsewhere
+    const refsReportsTo = await this.repo.count({ where: { ReportsTo: id } as any });
+    if (refsReportsTo > 0) {
+      throw new BadRequestException(`Cannot delete employee ${id} because ${refsReportsTo} employee(s) report to them`);
+    }
+
+    // Check Customers.SupportRepId (if the database has Customers table)
+    try {
+      // Use positional parameter binding (works with TypeORM query)
+      const raw = await this.repo.query('SELECT COUNT(*) AS cnt FROM Customer WHERE SupportRepId = ?', [id]);
+      const cntVal = raw && raw[0] ? raw[0].cnt ?? raw[0].CNT ?? Object.values(raw[0])[0] : 0;
+      const cnt = Number(cntVal || 0);
+      if (cnt > 0) {
+        throw new BadRequestException(`Cannot delete employee ${id} because ${cnt} customer(s) reference them as support rep`);
+      }
+    } catch (err) {
+      // If the Customer table doesn't exist or query fails, ignore and continue
+    }
+
     const res = await this.repo.delete({ EmployeeId: id } as any);
     if (res.affected === 0) throw new NotFoundException(`Employee ${id} not found`);
   }
